@@ -1,0 +1,105 @@
+    
+<!-- dependant drop down start -->
+<div id="depSearch" class="CategoryList" style="margin-bottom:50px">
+    <div class="inner">
+        <div class="CategoryList" >
+        <h3>Quick Find</h3>
+            <div class="BlockContent" style="margin-top:25px;">
+                <div class="">
+                    <select id='cat_1' class='' style='width:100%'>
+                        <option>Please Make A Selection</option>
+                    </select>
+                    <select id='cat_2' class='' style='width:100%;'>
+                        <option>Please Make A Selection </option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function() {
+        var optStr = '';
+        optStr += "<option value=''>Please Make A Selection</option>"
+        $(".SideCategoryListFlyout:visible > ul > li a").each(function(i, e) {
+            optStr += "<option value='" + $(this).attr('href') + "'>" + $(this).html() + "</option>"
+
+        });
+        $("#cat_1").html(optStr);
+
+        $("#cat_1").change(function() {
+            $("#uniform-cat_2").hide();
+            if ($("#cat_1").val() != '') {
+                Cat2Change($("#cat_1").val());
+            } else {
+                $("#uniform-cat_2").hide();
+                
+            }
+        });
+
+        $("#cat_2").change(function() {
+            if ($("#cat_2").val() != '') {
+                location.href = $(this).val();
+            }
+        });
+        
+        if(location.pathname != "/"){
+            
+            var url = location.href;
+            if($(".productlist-page #SideCategoryList a[href='"+url+"']").parent().parent().hasClass('sf-menu')){
+                // use-case for top level menu;
+                $("#cat_1").val(url).click().change();  
+            }
+            else{
+                // use-case for subcat
+                var href = $(".productlist-page #SideCategoryList a[href='"+url+"']").parent().parent().prev().attr("href");
+                if(href != ""){
+                    $("#cat_1").val(href).click().change();
+                    $("#uniform-cat_2 span").html($("#cat_2 option[value='"+url+"']").html());
+                }
+            }
+        }
+
+    });
+
+    function Cat2Change(val2) {
+        var cat_2list_1 = '';
+        $("#uniform-cat_2").hide();
+        $(".SideCategoryListFlyout:visible > ul > li a").each(function(i, e) {
+            if ($(this).attr('href') == val2) {
+                
+                if($(this).next().find('a').length > 0 ){
+                    cat_2list_1 += "<option value=''>Please Make A Selection</option>"
+                    var cats = [];
+                    $(this).next().find('a').each(function() {
+                        cats.push($(this).html()+"_"+$(this).attr('href'));
+                    });
+                    cats.sort();
+    
+                    $.each(cats,function(i,e) {
+                        var optVals = e.split("_");
+                        cat_2list_1 += "<option value='" + optVals[1]+ "'>" + optVals[0] + "</option>"
+                    });
+                    $("#cat_2").html(cat_2list_1);
+                    $("#uniform-cat_2").show();
+                }else{
+                    cat_2list_1 += "<option value=''>No SubCategories</option>"
+                    cat_2list_1 += "<option value='"+val2+"'>View Products</option>"
+                    $("#cat_2").html(cat_2list_1);
+                    $("#uniform-cat_2").show();
+                }
+            }
+        });
+    }
+</script>
+<style type="text/css">
+    #uniform-cat_1,#uniform-cat_2{
+        width:278px;
+    }
+    #uniform-cat_2{
+        margin-top:25px;
+        display:none;
+    }
+</style>
+<!-- dependant drop down end -->                        
+    
